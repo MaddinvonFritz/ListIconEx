@@ -6637,12 +6637,14 @@ Module ListEx
             EndIf
             
           Else
-           
-            ListEx()\Focus = #True
-            If SelectElement(ListEx()\Rows(), ListEx()\Row\Current)
-              ListEx()\Row\Focus = ListEx()\Row\Current
-            EndIf
             
+            If ListEx()\Row\Current >= 0; Fehler beim Klick auf eine Leere Fläche
+              ListEx()\Focus = #True
+              If SelectElement(ListEx()\Rows(), ListEx()\Row\Current)
+                ListEx()\Row\Focus = ListEx()\Row\Current
+              EndIf
+            EndIf
+          
           EndIf
     
           If IsWindow(ListEx()\Window\Num) And IsMenu(ListEx()\PopUpID)
@@ -11439,8 +11441,8 @@ CompilerIf #PB_Compiler_IsMainFile
   
 CompilerEndIf
 ; IDE Options = PureBasic 6.12 LTS (Windows - x64)
-; CursorPosition = 4906
-; FirstLine = 690
-; Folding = wCAgAAAAAAAAAAMAAAAAMAAAAAAAAACAAAAAAAAAgI7DAACAAAAAw-AAgo3RAwXAIAAAAAAAAAAAUAAACAAAAAAAAAIAAAEAIw
+; CursorPosition = 6640
+; FirstLine = 893
+; Folding = wCAgAAAAAAAAAAMAAAAAMAAAAAAAAACAAAAAAAAAgI7DAACAAAAAw-AAko3RAwXAIAAAAAAAAAAAUAAACAAAAAAAAAIAAAEAIw
 ; EnableXP
 ; DPIAware
