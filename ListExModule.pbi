@@ -26,7 +26,10 @@
 ; - Changed: New DPI management
 ; - Changed: Timer for Cursor & Autoscroll
 ; - Changed: New ScrollBars
-;
+; - Update: BlendColor ist Transparent
+; - Fehler bei Klick auf Leere Fläche
+; - Fehler bei GetItemText wenn keine Zeile oder Spalte ausgewählt ist.
+; - Bessere Unterstützung von Maus und Scrollbar
 
 
 ;{ ===== MIT License =====
@@ -11446,8 +11449,7 @@ CompilerIf #PB_Compiler_IsMainFile
   
 CompilerEndIf
 ; IDE Options = PureBasic 6.12 LTS (Windows - x64)
-; CursorPosition = 7272
-; FirstLine = 986
-; Folding = wCAgAAAAAAAAAAMAAAAAMAAAAAAAAACAAAAAAAAAgI7DAACAAAAAw-AAko3fg-XAIAAAAAAAAAAAUAAECAAAAAAAAAIAAAEAIw
+; CursorPosition = 31
+; Folding = xCAgAAAAAAAAAAMAAAAAMAAAAAAAAACAAAAAAAAAgI7DAACAAAAAw-AAko3fg-XAIAAAAAAAAAAAUAAECAAAAAAAAAIAAAEAIw
 ; EnableXP
 ; DPIAware
