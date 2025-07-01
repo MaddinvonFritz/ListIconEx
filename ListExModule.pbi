@@ -9512,23 +9512,25 @@ Module ListEx
   
   Procedure.s GetItemText(GNum.i, Row.i, Column.i)
     
-    If FindMapElement(ListEx(), Str(GNum))
-      
-      If Column < 0 : ProcedureReturn "" : EndIf 
-      
-      If Row = #Header
-        If SelectElement(ListEx()\Cols(), Column)
-          ProcedureReturn ListEx()\Cols()\Header\Title
-        EndIf
-      Else  
-        If SelectElement(ListEx()\Rows(), Row)
+    If Row >= 0 And Column >= 0
+      If FindMapElement(ListEx(), Str(GNum))
+        
+        If Column < 0 : ProcedureReturn "" : EndIf 
+        
+        If Row = #Header
           If SelectElement(ListEx()\Cols(), Column)
-            ProcedureReturn ListEx()\Rows()\Column(ListEx()\Cols()\Key)\Value
+            ProcedureReturn ListEx()\Cols()\Header\Title
           EndIf
+        Else  
+          If SelectElement(ListEx()\Rows(), Row)
+            If SelectElement(ListEx()\Cols(), Column)
+              ProcedureReturn ListEx()\Rows()\Column(ListEx()\Cols()\Key)\Value
+            EndIf
+          EndIf
+          
         EndIf
         
       EndIf
-      
     EndIf
     
   EndProcedure
@@ -11441,8 +11443,8 @@ CompilerIf #PB_Compiler_IsMainFile
   
 CompilerEndIf
 ; IDE Options = PureBasic 6.12 LTS (Windows - x64)
-; CursorPosition = 6640
-; FirstLine = 893
-; Folding = wCAgAAAAAAAAAAMAAAAAMAAAAAAAAACAAAAAAAAAgI7DAACAAAAAw-AAko3RAwXAIAAAAAAAAAAAUAAACAAAAAAAAAIAAAEAIw
+; CursorPosition = 9523
+; FirstLine = 1085
+; Folding = wCAgAAAAAAAAAAMAAAAAMAAAAAAAAACAAAAAAAAAgI7DAACAAAAAw-AAko3RAxXAIAAAAAAAAAAAUAAECAAAAAAAAAIAAAEAIw
 ; EnableXP
 ; DPIAware
