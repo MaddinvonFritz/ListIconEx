@@ -4596,6 +4596,7 @@ Module ListEx
     Define.i Flags, imgFlags, Align, Mark, Row, Column
     Define.i FrontColor, BackColor, RowColor, FontID, RowFontID, Time
     Define.s Key$, Text$
+    Define.i Blend
     
     If ListEx()\Hide : ProcedureReturn #False : EndIf
   
@@ -4909,27 +4910,47 @@ Module ListEx
             ;{ Background color
             If ListEx()\Flags & #MultiSelect And ListEx()\MultiSelect = #True
               If ListEx()\Rows()\State & #Selected
-                BackColor = BlendColor_(ListEx()\Color\Focus, ListEx()\Color\Back, 10)
+                ;BackColor = BlendColor_(ListEx()\Color\Focus, ListEx()\Color\Back, 10)
+                BackColor = RowColor
+                Blend = #True
               Else
                 BackColor = RowColor
+                Blend = #False
               EndIf
-            ElseIf ListEx()\Flags & #CellFocus And ListIndex(ListEx()\Rows()) = ListEx()\Row\Focus And ListEx()\Col\Current = ListIndex(ListEx()\Cols())
-              BackColor = BlendColor_(ListEx()\Color\Focus, ListEx()\Color\Back, 10)
-            ElseIf ListEx()\Flags & #CellFocus = #False And ListEx()\Focus And ListIndex(ListEx()\Rows()) = ListEx()\Row\Focus
-              BackColor = BlendColor_(ListEx()\Color\Focus, ListEx()\Color\Back, 10)
+              
             ElseIf Flags & #CellBack
               BackColor = ListEx()\Rows()\Column(Key$)\Color\Back
+              Blend = #False
             ElseIf ListEx()\Rows()\Color\Back <> #PB_Default
               BackColor = ListEx()\Rows()\Color\Back
+              Blend = #False
             ElseIf ListEx()\Cols()\BackColor <> #PB_Default
               BackColor = ListEx()\Cols()\BackColor 
+              Blend = #False
             Else
               BackColor = RowColor
+              Blend = #False
+            EndIf
+            
+            If ListEx()\Flags & #CellFocus And ListIndex(ListEx()\Rows()) = ListEx()\Row\Focus And ListEx()\Col\Current = ListIndex(ListEx()\Cols())
+              ;BackColor = BlendColor_(ListEx()\Color\Focus, ListEx()\Color\Back, 10)
+              Blend = #True
+            ElseIf ListEx()\Flags & #CellFocus = #False And ListEx()\Focus And ListIndex(ListEx()\Rows()) = ListEx()\Row\Focus
+              ;BackColor = BlendColor_(ListEx()\Color\Focus, ListEx()\Color\Back, 10)
+              Blend = #True
             EndIf
             
             DrawingMode(#PB_2DDrawing_Default)
             
-            Box_(colX, rowY, ListEx()\Cols()\Width, ListEx()\Rows()\Height, BackColor) ; 
+            If Blend = #True
+              Box_(colX, rowY, ListEx()\Cols()\Width, ListEx()\Rows()\Height, BackColor)
+              DrawingMode(#PB_2DDrawing_AlphaBlend)
+              Box_(colX, rowY, ListEx()\Cols()\Width, ListEx()\Rows()\Height, BlendColor_(ListEx()\Color\Focus, ListEx()\Color\Back, 10))
+              DrawingMode(#PB_2DDrawing_Default)
+            Else
+              
+              Box_(colX, rowY, ListEx()\Cols()\Width, ListEx()\Rows()\Height, BackColor) ; 
+            EndIf
             ;}
             
             ListEx()\Cols()\X = colX
@@ -11418,8 +11439,8 @@ CompilerIf #PB_Compiler_IsMainFile
   
 CompilerEndIf
 ; IDE Options = PureBasic 6.12 LTS (Windows - x64)
-; CursorPosition = 2935
-; FirstLine = 467
-; Folding = wCAgAAAAAAAAAAMAAAAAMAAAAAAAAACAAAAAAAAAAIiAAACAAAAAw-AAgo3RAwXAIAAAAAAAAAAAUAAACAAAAAAAAAIAAAEAIw
+; CursorPosition = 4906
+; FirstLine = 690
+; Folding = wCAgAAAAAAAAAAMAAAAAMAAAAAAAAACAAAAAAAAAgI7DAACAAAAAw-AAgo3RAwXAIAAAAAAAAAAAUAAACAAAAAAAAAIAAAEAIw
 ; EnableXP
 ; DPIAware
