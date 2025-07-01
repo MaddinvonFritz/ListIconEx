@@ -2933,7 +2933,7 @@ Module ListEx
     R1 = Red(Color1): G1 = Green(Color1): B1 = Blue(Color1)
     R2 = Red(Color2): G2 = Green(Color2): B2 = Blue(Color2)
     
-    ProcedureReturn RGB((R1*Blend) + (R2 * (1-Blend)), (G1*Blend) + (G2 * (1-Blend)), (B1*Blend) + (B2 * (1-Blend)))
+    ProcedureReturn RGBA((R1*Blend) + (R2 * (1-Blend)), (G1*Blend) + (G2 * (1-Blend)), (B1*Blend) + (B2 * (1-Blend)), 190)
   EndProcedure
   
   Procedure   ColorTheme_(Theme.i)
@@ -11419,7 +11419,7 @@ CompilerIf #PB_Compiler_IsMainFile
 CompilerEndIf
 ; IDE Options = PureBasic 6.12 LTS (Windows - x64)
 ; CursorPosition = 2935
-; FirstLine = 477
+; FirstLine = 467
 ; Folding = wCAgAAAAAAAAAAMAAAAAMAAAAAAAAACAAAAAAAAAAIiAAACAAAAAw-AAgo3RAwXAIAAAAAAAAAAAUAAACAAAAAAAAAIAAAEAIw
 ; EnableXP
 ; DPIAware
