@@ -7220,6 +7220,8 @@ Module ListEx
       ; _____ Scrollbar _____
 			If ListEx()\Flags & #Horizontal   ;{ Horizontal Scrollbar
 			  
+			  ListEx()\HScroll\CursorPos = #PB_Default
+			  
 			  If ListEx()\HScroll\Hide = #False
 			    
 			    If dY > dpiY(ListEx()\HScroll\Y) And dY < dpiY(ListEx()\HScroll\Y + ListEx()\HScroll\Height)
@@ -7267,6 +7269,8 @@ Module ListEx
 			EndIf   
 		
       If ListEx()\Flags & #Vertical     ;{ Vertical Scrollbar
+        
+        ListEx()\VScroll\CursorPos = #PB_Default
         
         If ListEx()\VScroll\Hide = #False
           
@@ -7449,6 +7453,22 @@ Module ListEx
   			  Forwards  = ListEx()\HScroll\Buttons\fState
   			  Thumb     = ListEx()\HScroll\Thumb\State
   			  
+  			  ;{ --- Move thumb with cursor 
+  			  If ListEx()\HScroll\CursorPos <> #PB_Default And dX > dpiX(ListEx()\HScroll\X) And dX < dpiX(ListEx()\HScroll\X + ListEx()\HScroll\Width)
+  			    
+  			    CursorPos = ListEx()\HScroll\Pos
+  			    
+  			    ListEx()\HScroll\Pos = GetThumbPosX_(X)
+  			    ListEx()\HScroll\CursorPos = X
+  			    
+  			    If CursorPos <> ListEx()\HScroll\Pos
+  			      Draw_(#Horizontal)
+  			    Else
+  			      DrawThumb_(#Horizontal)
+  			    EndIf  
+  			    
+  			  EndIf ;}
+  			  
   			  If dY > dpiY(ListEx()\HScroll\Y) And dY < dpiY(ListEx()\HScroll\Y + ListEx()\HScroll\Height)
   			    If dX > dpiX(ListEx()\HScroll\X) And dX < dpiX(ListEx()\HScroll\X + ListEx()\HScroll\Width)
   			      
@@ -7459,7 +7479,7 @@ Module ListEx
   			      ListEx()\HScroll\Buttons\fState = #Focus
   			      ListEx()\HScroll\Thumb\State    = #Focus
   			      
-  			      ; --- Hover Buttons & Thumb ---
+  			      ; --- Hover Buttons ---
   			      If dX > dpiX(ListEx()\HScroll\Buttons\bX) And  dX < dpiX(ListEx()\HScroll\Buttons\bX + ListEx()\HScroll\Buttons\Width)
   			        
   			        ListEx()\HScroll\Buttons\bState = #Hover
@@ -7471,22 +7491,6 @@ Module ListEx
   			      ElseIf dX > dpiX(ListEx()\HScroll\Thumb\X) And dX < dpiX(ListEx()\HScroll\Thumb\X + ListEx()\HScroll\Thumb\Width)
   			        
   			        ListEx()\HScroll\Thumb\State = #Hover
-  			        
-  			        ;{ --- Move thumb with cursor 
-  			        If ListEx()\HScroll\CursorPos <> #PB_Default
-  			          
-  			          CursorPos = ListEx()\HScroll\Pos
-  			          
-    			        ListEx()\HScroll\Pos = GetThumbPosX_(X)
-    			        ListEx()\HScroll\CursorPos = X
-    			        
-    			        If CursorPos <> ListEx()\HScroll\Pos
-    			          Draw_(#Horizontal)
-    			        Else
-    			          DrawThumb_(#Horizontal)
-    			        EndIf  
-    			        
-    			      EndIf ;}
   			        
     			    EndIf
 
@@ -7527,6 +7531,22 @@ Module ListEx
   			  Forwards  = ListEx()\VScroll\Buttons\fState
   			  Thumb     = ListEx()\VScroll\Thumb\State
   			  
+  			  ;{ --- Move thumb with cursor 
+  			  If ListEx()\VScroll\CursorPos <> #PB_Default And dY > dpiY(ListEx()\VScroll\Y) And dY < dpiY(ListEx()\VScroll\Y + ListEx()\VScroll\Height)
+  			    
+  			    CursorPos = ListEx()\VScroll\Pos
+  			    
+  			    ListEx()\VScroll\Pos       = GetThumbPosY_(Y)
+  			    ListEx()\VScroll\CursorPos = Y
+  			    
+  			    If CursorPos <> ListEx()\VScroll\Pos
+  			      Draw_(#Vertical)
+  			    Else
+  			      DrawThumb_(#Vertical)
+  			    EndIf
+  			    
+  			  EndIf ;}
+  			  
   			  If dX > dpiX(ListEx()\VScroll\X) And dX < dpiX(ListEx()\VScroll\X + ListEx()\VScroll\Width)
   			    If dY > dpiY(ListEx()\VScroll\Y) And dY < dpiY(ListEx()\VScroll\Y + ListEx()\VScroll\Height)
 
@@ -7549,22 +7569,6 @@ Module ListEx
   			      ElseIf dY > dpiY(ListEx()\VScroll\Thumb\Y) And dY < dpiY(ListEx()\VScroll\Thumb\Y + ListEx()\VScroll\Thumb\Height)
   			        
   			        ListEx()\VScroll\Thumb\State = #Hover
-  			        
-  			        ;{ --- Move thumb with cursor 
-  			        If ListEx()\VScroll\CursorPos <> #PB_Default
-  			          
-  			          CursorPos = ListEx()\VScroll\Pos
-  			          
-    			        ListEx()\VScroll\Pos       = GetThumbPosY_(Y)
-    			        ListEx()\VScroll\CursorPos = Y
-    			        
-    			        If CursorPos <> ListEx()\VScroll\Pos
-    			          Draw_(#Vertical)
-    			        Else
-    			          DrawThumb_(#Vertical)
-    			        EndIf
-    			        
-    			      EndIf ;}
   
     			    EndIf   
     			    
@@ -7595,8 +7599,7 @@ Module ListEx
         EndIf  
 			  ;}
 			EndIf 
-			
-			ListEx()\HScroll\CursorPos = #PB_Default
+						
 			
 			Row    = GetRowDPI_(dY)
       Column = GetColumnDPI_(dX)
@@ -11443,8 +11446,8 @@ CompilerIf #PB_Compiler_IsMainFile
   
 CompilerEndIf
 ; IDE Options = PureBasic 6.12 LTS (Windows - x64)
-; CursorPosition = 9523
-; FirstLine = 1085
-; Folding = wCAgAAAAAAAAAAMAAAAAMAAAAAAAAACAAAAAAAAAgI7DAACAAAAAw-AAko3RAxXAIAAAAAAAAAAAUAAECAAAAAAAAAIAAAEAIw
+; CursorPosition = 7272
+; FirstLine = 986
+; Folding = wCAgAAAAAAAAAAMAAAAAMAAAAAAAAACAAAAAAAAAgI7DAACAAAAAw-AAko3fg-XAIAAAAAAAAAAAUAAECAAAAAAAAAIAAAEAIw
 ; EnableXP
 ; DPIAware
