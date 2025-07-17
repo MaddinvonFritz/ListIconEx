@@ -7221,6 +7221,9 @@ Module ListEx
       EndIf
       
       ; _____ Scrollbar _____
+      ListEx()\HScroll\CursorPos = #PB_Default
+      ListEx()\VScroll\CursorPos = #PB_Default
+      
 			If ListEx()\Flags & #Horizontal   ;{ Horizontal Scrollbar
 			  
 			  ListEx()\HScroll\CursorPos = #PB_Default
@@ -11449,7 +11452,8 @@ CompilerIf #PB_Compiler_IsMainFile
   
 CompilerEndIf
 ; IDE Options = PureBasic 6.12 LTS (Windows - x64)
-; CursorPosition = 31
+; CursorPosition = 7224
+; FirstLine = 993
 ; Folding = xCAgAAAAAAAAAAMAAAAAMAAAAAAAAACAAAAAAAAAgI7DAACAAAAAw-AAko3fg-XAIAAAAAAAAAAAUAAECAAAAAAAAAIAAAEAIw
 ; EnableXP
 ; DPIAware
