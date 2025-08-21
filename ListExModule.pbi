@@ -9091,8 +9091,9 @@ Module ListEx
     If IsWindow(WindowNum)
       
       If Flags & #UseExistingCanvas ;{ Use an existing CanvasGadget
-        If IsGadget(GNum)
+        If IsGadget(GNum) And GadgetType(GNum) = #PB_GadgetType_Canvas
           Result = #True
+          OpenGadgetList(Gnum)
         Else
           ProcedureReturn #False
         EndIf
@@ -11452,8 +11453,8 @@ CompilerIf #PB_Compiler_IsMainFile
   
 CompilerEndIf
 ; IDE Options = PureBasic 6.12 LTS (Windows - x64)
-; CursorPosition = 7224
-; FirstLine = 993
-; Folding = xCAgAAAAAAAAAAMAAAAAMAAAAAAAAACAAAAAAAAAgI7DAACAAAAAw-AAko3fg-XAIAAAAAAAAAAAUAAECAAAAAAAAAIAAAEAIw
+; CursorPosition = 9095
+; FirstLine = 1186
+; Folding = 2CAgAAAAAAAAAAMAAAAAMAAAAAAAAACAAAAAAAAAgI7DAAKQEEAAw-AAgo3dA-XAIAAAAAAAAAUABAAECAAAAAAAAAIAAAEAIw
 ; EnableXP
 ; DPIAware
