@@ -1180,6 +1180,7 @@ Module ListEx
   Declare CloseDate_(Escape.i=#False)
   Declare CloseListView_()
   Declare SetRowFocus_(Row.i)
+  Declare SetColumnFocus_(Column.i)
   
   CompilerIf #PB_Compiler_OS = #PB_OS_MacOS
     ; Addition of mk-soft
@@ -5464,7 +5465,7 @@ Module ListEx
   
   Procedure.i ManageEditGadgets_(Row.i, Column.i)
     Define.f X, Y
-    Define.i Date
+    Define.i Date, RF, CF
     Define.s Value$, Key$, Mask$
     
     If ListEx()\String\Flag   = #True : ProcedureReturn #False : EndIf
@@ -5491,6 +5492,14 @@ Module ListEx
           If ListEx()\Editable
             
             If IsGadget(ListEx()\StringNum)
+              
+              RF = SetRowFocus_(Row)
+              CF = SetColumnFocus_(Column)
+              If RF Or CF
+                Draw_(#Horizontal | #Vertical)
+                Y = ListEx()\Rows()\Y
+                X = ListEx()\Cols()\X
+              EndIf
               
               If ListEx()\Cols()\FontID
                 SetGadgetFont(ListEx()\StringNum, ListEx()\Cols()\FontID)
@@ -5526,6 +5535,15 @@ Module ListEx
               BindShortcuts_(#True)
               
             Else
+              
+              RF = SetRowFocus_(Row)
+              CF = SetColumnFocus_(Column)
+              If RF Or CF
+                Draw_(#Horizontal | #Vertical)
+                Y = ListEx()\Rows()\Y
+                X = ListEx()\Cols()\X
+              EndIf
+              
               ListEx()\Cursor\Pause = #False
               
               If ListEx()\Cols()\FontID
@@ -5617,6 +5635,14 @@ Module ListEx
           If IsGadget(ListEx()\DateNum)
             
             If ListEx()\Editable
+              
+              RF = SetRowFocus_(Row)
+              CF = SetColumnFocus_(Column)
+              If RF Or CF
+                Draw_(#Horizontal | #Vertical)
+                Y = ListEx()\Rows()\Y
+                X = ListEx()\Cols()\X
+              EndIf
               
               Mask$ = ListEx()\Date\Mask
               
@@ -6137,7 +6163,7 @@ Module ListEx
   
 
   Procedure _KeyShiftTabHandler()
-    Define.i GNum, Column, Row
+    Define.i GNum, Column, Row, RF, CF
     Define.i ActiveID = GetActiveGadget()
 
     If IsGadget(ActiveID)
@@ -6155,12 +6181,18 @@ Module ListEx
               If SelectElement(ListEx()\Rows(), Row)
                 Column = PreviousEditColumn_(#PB_Default)
                 If Column <> #NotValid
+                  RF = SetRowFocus_(Row)
+                  CF = SetColumnFocus_(Column)
+                  If RF Or CF : Draw_(#Horizontal | #Vertical) : EndIf
                   ManageEditGadgets_(Row, Column)
                 EndIf 
               EndIf
             Else
+              CF = SetColumnFocus_(Column)
+              If CF : Draw_(#Horizontal) : EndIf
               ManageEditGadgets_(ListEx()\Date\Row, Column)
             EndIf
+            
           Case ListEx()\StringNum
             CloseString_()
             Column = PreviousEditColumn_(ListEx()\String\Col)
@@ -6169,10 +6201,15 @@ Module ListEx
               If SelectElement(ListEx()\Rows(), Row)
                 Column = PreviousEditColumn_(#PB_Default)
                 If Column <> #NotValid
+                  RF = SetRowFocus_(Row)
+                  CF = SetColumnFocus_(Column)
+                  If RF Or CF : Draw_(#Horizontal | #Vertical) : EndIf
                   ManageEditGadgets_(Row, Column)
                 EndIf 
               EndIf
             Else
+              CF = SetColumnFocus_(Column)
+              If CF : Draw_(#Horizontal) : EndIf
               ManageEditGadgets_(ListEx()\String\Row, Column)
             EndIf
         EndSelect
@@ -6186,6 +6223,7 @@ Module ListEx
   Procedure _KeyTabHandler()
     Define.i GNum, Column, Row
     Define.i ActiveID = GetActiveGadget()
+    Define.i RF, CF
 
     If IsGadget(ActiveID)
       
@@ -6202,12 +6240,18 @@ Module ListEx
               If SelectElement(ListEx()\Rows(), Row)
                 Column = NextEditColumn_(#PB_Default)
                 If Column <> #NotValid
+                  RF = SetRowFocus_(Row)
+                  CF = SetColumnFocus_(Column)
+                  If RF Or CF : Draw_(#Horizontal | #Vertical) : EndIf
                   ManageEditGadgets_(Row, Column)
                 EndIf 
               EndIf
             Else
+              CF = SetColumnFocus_(Column)
+              If CF : Draw_(#Horizontal) : EndIf
               ManageEditGadgets_(ListEx()\Date\Row, Column)
             EndIf
+            
           Case ListEx()\StringNum
             CloseString_()
             
@@ -6217,16 +6261,21 @@ Module ListEx
               If SelectElement(ListEx()\Rows(), Row)
                 Column = NextEditColumn_(#PB_Default)
                 If Column <> #NotValid
+                  RF = SetRowFocus_(Row)
+                  CF = SetColumnFocus_(Column)
+                  If RF Or CF : Draw_(#Horizontal | #Vertical) : EndIf
                   ManageEditGadgets_(Row, Column)
                 EndIf 
               EndIf
             Else
+              CF = SetColumnFocus_(Column)
+              If CF : Draw_(#Horizontal) : EndIf
               ManageEditGadgets_(ListEx()\String\Row, Column)
             EndIf
         EndSelect
         
       EndIf
-      
+
     EndIf
   
   EndProcedure
@@ -6278,7 +6327,7 @@ Module ListEx
     Define.i Row, Column, PageRows, Key, Modifier, Scrollbar
     Define.s Text
     Define.i GNum = EventGadget()
-
+Debug "Taste"
     If FindMapElement(ListEx(), Str(GNum))
       
       Key      = GetGadgetAttribute(GNum, #PB_Canvas_Key)
@@ -8001,6 +8050,13 @@ Module ListEx
         
         If ListEx()\HScroll\Focus And ListEx()\HScroll\Hide = #False
           SetThumbPosX_(ListEx()\HScroll\Pos - Steps)
+          If ListEx()\Date\Flag           ;{ Close DateGadget , StringGadget
+            CloseDate_()
+          EndIf
+          If ListEx()\String\Flag
+            CloseString_()
+          EndIf ;}
+          
           Draw_(#Horizontal)
           ProcedureReturn #True
         EndIf  
@@ -8010,6 +8066,13 @@ Module ListEx
       If ListEx()\Scrollbar\Flags & #Vertical   ;{ Vertical Scrollbar
         
         If ListEx()\VScroll\Hide = #False
+          If ListEx()\Date\Flag           ;{ Close DateGadget , StringGadget
+            CloseDate_()
+          EndIf
+          If ListEx()\String\Flag
+            CloseString_()
+          EndIf ;}
+          
           SetThumbPosY_(ListEx()\VScroll\Pos - Steps)
           Draw_(#Vertical)
         EndIf
@@ -8493,9 +8556,11 @@ Module ListEx
 	
   Procedure   SetRowFocus_(Row.i)
     Define.i Y1, Y2, Difference
+    Define.i PReturn
     
     Y1 = ListEx()\Area\Y + ListEx()\Header\Height
     Y2 = ListEx()\Area\Y + ListEx()\Area\Height
+    PReturn = #False
     
     PushListPosition(ListEx()\Rows())
     
@@ -8504,18 +8569,51 @@ Module ListEx
       If ListEx()\Rows()\Y < Y1
         Difference = Y1 - ListEx()\Rows()\Y
         SetThumbPosY_(ListEx()\VScroll\Pos - Difference - 2)
+        PReturn = #True
       ElseIf ListEx()\Rows()\Y + ListEx()\Rows()\Height > Y2
         Difference = Y2 - ListEx()\Rows()\Y - ListEx()\Rows()\Height - 2
         SetThumbPosY_(ListEx()\VScroll\Pos - Difference)
+        PReturn = #True
       EndIf 
       
     EndIf
     
     PopListPosition(ListEx()\Rows())
     
+    ProcedureReturn PReturn
+    
   EndProcedure
   
-
+  Procedure   SetColumnFocus_(Column.i)
+    Define.i X1, X2, Difference
+    Define.i PReturn  
+    
+    X1 = ListEx()\Area\X
+    X2 = ListEx()\Area\X + ListEx()\Area\Width
+    PReturn = #False
+    
+    PushListPosition(ListEx()\Cols())
+    
+    If SelectElement(ListEx()\Cols(), Column)
+      
+      If ListEx()\Cols()\X < X1
+        Difference = X1 - ListEx()\Cols()\X
+        SetThumbPosX_(ListEx()\HScroll\Pos - Difference - 2)
+        PReturn = #True
+      ElseIf ListEx()\Cols()\X + ListEx()\Cols()\Width > X2
+        Difference = X2 - ListEx()\Cols()\X - ListEx()\Cols()\Width - 2
+        SetThumbPosX_(ListEx()\HScroll\Pos - Difference)
+        PReturn = #True
+      EndIf 
+      
+    EndIf
+    
+    PopListPosition(ListEx()\Cols())
+    
+    ProcedureReturn PReturn
+    
+  EndProcedure
+  
   ;- ==========================================================================
   ;-   Module - Declared Procedures
   ;- ==========================================================================  
@@ -10971,7 +11069,7 @@ Module ListEx
           EndIf 
           
           SetRowFocus_(ListEx()\Row\Focus)
-
+          
           Draw_()
           
         EndIf
@@ -11565,9 +11663,9 @@ CompilerIf #PB_Compiler_IsMainFile
   
 CompilerEndIf
 ; IDE Options = PureBasic 6.12 LTS (Windows - x64)
-; CursorPosition = 6175
-; FirstLine = 1049
-; Folding = 2CAgAAAAAAAAEAMAAAAAMAAAAAAAAASAAAAAAMAAAI7DAACnYIAAfAA3iRt8I+vAQxBAAAEAYEowAAAIEADAAAAADYQEAAIAQg
-; Markers = 5466,5689,6278,8211
+; CursorPosition = 8068
+; FirstLine = 1237
+; Folding = 2AggAAAAAAAAEAMAAAAAMAAAAAAAgASAAQBAAMAAgJCAAACFYIAAACAiiTt8I+vA+BEIHjgAAjAFGAAAhAaAAAAAYADiAAABAC9
+; Markers = 5467,5715,6327,8274,8557,8558
 ; EnableXP
 ; DPIAware
