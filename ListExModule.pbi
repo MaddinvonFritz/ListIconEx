@@ -84,7 +84,7 @@
 ; ListEx::EventValue()              - returns value   (string)
 ; ListEx::EventID()                 - returns row ID or header label 
 ; ListEx::ExportCSV()               - export CSV-file from list
-; ListEx::Gadget()                  - [#GridLines|#NumberedColumn|#NoRowHeader]
+; ListEx::Gadget()                  - [#GridLines|#NumberedColumn|#NoRowHeader|#UseRealStringGadget]
 ; ListEx::GetAttribute()            - similar to 'GetGadgetAttribute()'
 ; ListEx::GetCellText()             - similar to 'GetGadgetItemText()' with labels
 ; ListEx::GetCellState()            - similar to 'GetGadgetItemState()' with labels
@@ -227,6 +227,7 @@ DeclareModule ListEx
     #MultiSelect
     #FitColumn
     #EditableCombobox
+    #UseRealStringGadget
     ; --- Scrollbars ---
     #Vertical 
     #Horizontal
@@ -1095,6 +1096,7 @@ Module ListEx
     
     ;ComboNum.i
     DateNum.i
+    StringNum.i
     PopUpID.i
     HScrollNum.i
     VScrollNum.i
@@ -4532,6 +4534,8 @@ Module ListEx
     Define.i X, Y, Width, Height, txtHeight
     Define.i TextColor, BackColor, BorderColor
     
+    If IsGadget(ListEx()\StringNum) : ProcedureReturn : EndIf
+    
     If ListEx()\String\X < 0 Or ListEx()\String\Y < 0 : ProcedureReturn #False : EndIf 
     
     X      = ListEx()\String\X
@@ -5486,37 +5490,75 @@ Module ListEx
   
           If ListEx()\Editable
             
-            ListEx()\Cursor\Pause = #False
-            
-            If ListEx()\Cols()\FontID
-              ListEx()\String\FontID = ListEx()\Cols()\FontID
-            Else
-              ListEx()\String\FontID = ListEx()\Row\FontID
-            EndIf  
-            
-            ListEx()\String\Row     = Row
-            ListEx()\String\Col     = Column
-            ListEx()\String\X       = X
-            ListEx()\String\Y       = Y
-            ListEx()\String\Width   = ListEx()\Cols()\Width
-            ListEx()\String\Height  = ListEx()\Rows()\Height
-            ListEx()\String\Label   = ListEx()\Cols()\Key
-            ListEx()\String\Text    = ListEx()\Rows()\Column(Key$)\Value
-            ListEx()\String\Flag    = #True
-            ListEx()\String\Wrong   = #False
-            
-            ListEx()\String\CursorPos = Len(ListEx()\String\Text)
-            
-            BindTabulator_(#False)
-            
-            If ListEx()\Cols()\Flags & #StartSelected Or ListEx()\Rows()\Column(Key$)\Flags & #StartSelected
-              ListEx()\Selection\Pos1 = 0
-              ListEx()\Selection\Pos2 = Len(ListEx()\String\Text)
-              ListEx()\Selection\Flag = #TextSelected
-            EndIf
-          
-            DrawString_()
+            If IsGadget(ListEx()\StringNum)
+              
+              If ListEx()\Cols()\FontID
+                SetGadgetFont(ListEx()\StringNum, ListEx()\Cols()\FontID)
+              Else
+                Debug "Font"
+                SetGadgetFont(ListEx()\StringNum, ListEx()\Row\FontID)
+              EndIf
 
+              ListEx()\String\Row     = Row
+              ListEx()\String\Col     = Column
+              ListEx()\String\X       = X
+              ListEx()\String\Y       = Y
+              ListEx()\String\Width   = ListEx()\Cols()\Width
+              ListEx()\String\Height  = ListEx()\Rows()\Height
+              ListEx()\String\Label   = ListEx()\Cols()\Key
+              ListEx()\String\Text    = ListEx()\Rows()\Column(Key$)\Value
+              ListEx()\String\Flag    = #True
+              ListEx()\String\Wrong   = #False
+              
+              SetGadgetText(ListEx()\StringNum, ListEx()\Rows()\Column(Key$)\Value)
+              ResizeGadget(ListEx()\StringNum, X + 1, Y + 1, ListEx()\Cols()\Width - 1, ListEx()\Rows()\Height - 1)
+              HideGadget(ListEx()\StringNum, #False)
+              
+              CompilerIf #PB_Compiler_OS = #PB_OS_Windows
+                SendMessage_(GadgetID(ListEx()\StringNum),#EM_SETSEL,0,-1)
+              CompilerElse
+                Debug "StringGadget Markieren für Linux und Mac noch nicht hinzugefügt."
+              CompilerEndIf
+              
+              SetActiveGadget(ListEx()\StringNum)
+              
+              ;BindTabulator_(#True)
+              BindShortcuts_(#True)
+              
+            Else
+              ListEx()\Cursor\Pause = #False
+              
+              If ListEx()\Cols()\FontID
+                ListEx()\String\FontID = ListEx()\Cols()\FontID
+              Else
+                ListEx()\String\FontID = ListEx()\Row\FontID
+              EndIf  
+              
+              ListEx()\String\Row     = Row
+              ListEx()\String\Col     = Column
+              ListEx()\String\X       = X
+              ListEx()\String\Y       = Y
+              ListEx()\String\Width   = ListEx()\Cols()\Width
+              ListEx()\String\Height  = ListEx()\Rows()\Height
+              ListEx()\String\Label   = ListEx()\Cols()\Key
+              ListEx()\String\Text    = ListEx()\Rows()\Column(Key$)\Value
+              ListEx()\String\Flag    = #True
+              ListEx()\String\Wrong   = #False
+              
+              ListEx()\String\CursorPos = Len(ListEx()\String\Text)
+              
+              BindTabulator_(#False)
+              
+              If ListEx()\Cols()\Flags & #StartSelected Or ListEx()\Rows()\Column(Key$)\Flags & #StartSelected
+                ListEx()\Selection\Pos1 = 0
+                ListEx()\Selection\Pos2 = Len(ListEx()\String\Text)
+                ListEx()\Selection\Flag = #TextSelected
+              EndIf
+            
+              DrawString_()
+              
+            EndIf
+            
           EndIf
           ;}
         ElseIf ListEx()\Cols()\Flags & #ComboBoxes Or ListEx()\Rows()\Column(Key$)\Flags & #ComboBoxes ;{ ComboCoxes
@@ -6097,7 +6139,7 @@ Module ListEx
   Procedure _KeyShiftTabHandler()
     Define.i GNum, Column, Row
     Define.i ActiveID = GetActiveGadget()
-    
+
     If IsGadget(ActiveID)
       
       GNum = GetGadgetData(ActiveID)
@@ -6119,6 +6161,20 @@ Module ListEx
             Else
               ManageEditGadgets_(ListEx()\Date\Row, Column)
             EndIf
+          Case ListEx()\StringNum
+            CloseString_()
+            Column = PreviousEditColumn_(ListEx()\String\Col)
+            If Column = #NotValid
+              Row = ListEx()\String\Row - 1
+              If SelectElement(ListEx()\Rows(), Row)
+                Column = PreviousEditColumn_(#PB_Default)
+                If Column <> #NotValid
+                  ManageEditGadgets_(Row, Column)
+                EndIf 
+              EndIf
+            Else
+              ManageEditGadgets_(ListEx()\String\Row, Column)
+            EndIf
         EndSelect
         
       EndIf
@@ -6130,7 +6186,7 @@ Module ListEx
   Procedure _KeyTabHandler()
     Define.i GNum, Column, Row
     Define.i ActiveID = GetActiveGadget()
-    
+
     If IsGadget(ActiveID)
       
       GNum = GetGadgetData(ActiveID)
@@ -6152,6 +6208,21 @@ Module ListEx
             Else
               ManageEditGadgets_(ListEx()\Date\Row, Column)
             EndIf
+          Case ListEx()\StringNum
+            CloseString_()
+            
+            Column = NextEditColumn_(ListEx()\String\Col)
+            If Column = #NotValid
+              Row = ListEx()\String\Row + 1
+              If SelectElement(ListEx()\Rows(), Row)
+                Column = NextEditColumn_(#PB_Default)
+                If Column <> #NotValid
+                  ManageEditGadgets_(Row, Column)
+                EndIf 
+              EndIf
+            Else
+              ManageEditGadgets_(ListEx()\String\Row, Column)
+            EndIf
         EndSelect
         
       EndIf
@@ -6171,7 +6242,9 @@ Module ListEx
         
         Select ActiveID 
           Case ListEx()\DateNum
-            CloseDate_()  
+            CloseDate_() 
+          Case ListEx()\StringNum
+            CloseString_()
         EndSelect
         
       EndIf
@@ -6192,6 +6265,8 @@ Module ListEx
         Select ActiveID  
           Case ListEx()\DateNum
             CloseDate_(#True)
+          Case ListEx()\StringNum
+            CloseString_(#True)
         EndSelect
         
       EndIf
@@ -8092,6 +8167,7 @@ Module ListEx
     
     If IsWindow(ListEx()\Window\Num)
       If Flag
+        Debug "Shortcuts on"
         AddKeyboardShortcut(ListEx()\Window\Num, #PB_Shortcut_Return, #Key_Return)
         AddKeyboardShortcut(ListEx()\Window\Num, #PB_Shortcut_Escape, #Key_Escape)
         AddKeyboardShortcut(ListEx()\Window\Num, #PB_Shortcut_Tab,    #Key_Tab)
@@ -8101,6 +8177,7 @@ Module ListEx
         BindMenuEvent(ListEx()\ShortCutID, #Key_Tab,      @_KeyTabHandler())
         BindMenuEvent(ListEx()\ShortCutID, #Key_ShiftTab, @_KeyShiftTabHandler())
       Else
+        Debug "Shortcuts off"
         UnbindMenuEvent(ListEx()\ShortCutID, #Key_Return,   @_KeyReturnHandler())
         UnbindMenuEvent(ListEx()\ShortCutID, #Key_Escape,   @_KeyEscapeHandler())
         UnbindMenuEvent(ListEx()\ShortCutID, #Key_Tab,      @_KeyTabHandler())
@@ -8118,9 +8195,11 @@ Module ListEx
     
     If IsWindow(ListEx()\Window\Num)
       If Flag
+        Debug "Tab Shortcuts on"
         AddKeyboardShortcut(ListEx()\Window\Num, #PB_Shortcut_Tab,    #Key_Tab)
         AddKeyboardShortcut(ListEx()\Window\Num, #PB_Shortcut_Tab|#PB_Shortcut_Shift, #Key_ShiftTab)
       Else
+        Debug "Tab Shortcuts off"
         RemoveKeyboardShortcut(ListEx()\Window\Num, #PB_Shortcut_Tab)
         RemoveKeyboardShortcut(ListEx()\Window\Num, #PB_Shortcut_Tab|#PB_Shortcut_Shift)
       EndIf
@@ -8135,7 +8214,33 @@ Module ListEx
     If SelectElement(ListEx()\Rows(), ListEx()\String\Row)
       If SelectElement(ListEx()\Cols(), ListEx()\String\Col)
         
-        If IsContentValid_(ListEx()\String\Text) Or Escape
+        If IsGadget(ListEx()\StringNum)
+          
+          If Escape
+            
+            UpdateEventData_(#EventType_String, #NotValid, #NotValid, "", #NotValid, "")
+            
+          Else
+            
+            ListEx()\Rows()\Column(ListEx()\String\Label)\Value = GetGadgetText(ListEx()\StringNum)
+            
+            UpdateEventData_(#EventType_String, ListEx()\String\Row, ListEx()\String\Col, GetGadgetText(ListEx()\StringNum), #NotValid, ListEx()\Rows()\ID)
+            
+            If IsWindow(ListEx()\Window\Num)
+              PostEvent(#PB_Event_Gadget, ListEx()\Window\Num, ListEx()\CanvasNum, #EventType_String)
+              PostEvent(#Event_Gadget,    ListEx()\Window\Num, ListEx()\CanvasNum, #EventType_String)
+            EndIf 
+            
+            ListEx()\Changed = #True
+            
+          EndIf
+          
+          HideGadget(ListEx()\StringNum, #True)
+          ListEx()\String\Text  = ""
+          ListEx()\String\Label = ""
+          ListEx()\String\Flag  = #False
+          
+        ElseIf IsContentValid_(ListEx()\String\Text) Or Escape
           
           ListEx()\Cursor\Pause = #True
           
@@ -9196,6 +9301,12 @@ Module ListEx
             EndIf
           CompilerEndIf
           ListEx()\Date\Mask = ListEx()\Country\DateMask
+          
+          If Flags & #UseRealStringGadget
+            ListEx()\StringNum = StringGadget(#PB_Any, 0, 0, 10, 10, "", #PB_String_BorderLess)
+            SetGadgetData(ListEx()\StringNum, ListEx()\CanvasNum)
+            HideGadget(ListEx()\StringNum, #True)
+          EndIf
           ;}
           
           ;{ Scrollbars
@@ -10952,7 +11063,7 @@ EndModule
 
 CompilerIf #PB_Compiler_IsMainFile
 
-  #Example = 0
+  #Example = 6
   
   ; 0: Numbering in column 0
   ; 1: Checkboxes in column 0
@@ -11052,6 +11163,7 @@ CompilerIf #PB_Compiler_IsMainFile
   LoadFont(#Font_Arial9U, "Arial", 9, #PB_Font_Underline)
   
   If OpenWindow(#Window, 0, 0, 500, 250, "Window", #PB_Window_SystemMenu|#PB_Window_ScreenCentered|#PB_Window_SizeGadget)
+    ;CreateMenu(#PB_Any, WindowID(#Window))
     
     If CreatePopupMenu(#PopupMenu) ;{ Popup menu
       MenuItem(#MenuItem5, "Copy to clipboard")
@@ -11095,7 +11207,7 @@ CompilerIf #PB_Compiler_IsMainFile
         Flags.i = ListEx::#NumberedColumn|ListEx::#GridLines|ListEx::#AutoResize
     EndSelect ;}
     
-    If ListEx::Gadget(#List, 90, 10, 395, 230, "", 25, "", Flags, #Window)
+    If ListEx::Gadget(#List, 90, 10, 395, 230, "", 25, "", Flags | ListEx::#UseRealStringGadget, #Window)
 
       ListEx::DisableReDraw(#List, #True) 
 
@@ -11453,8 +11565,9 @@ CompilerIf #PB_Compiler_IsMainFile
   
 CompilerEndIf
 ; IDE Options = PureBasic 6.12 LTS (Windows - x64)
-; CursorPosition = 9095
-; FirstLine = 1186
-; Folding = 2CAgAAAAAAAAAAMAAAAAMAAAAAAAAACAAAAAAAAAgI7DAAKQEEAAw-AAgo3dA-XAIAAAAAAAAAUABAAECAAAAAAAAAIAAAEAIw
+; CursorPosition = 6175
+; FirstLine = 1049
+; Folding = 2CAgAAAAAAAAEAMAAAAAMAAAAAAAAASAAAAAAMAAAI7DAACnYIAAfAA3iRt8I+vAQxBAAAEAYEowAAAIEADAAAAADYQEAAIAQg
+; Markers = 5466,5689,6278,8211
 ; EnableXP
 ; DPIAware
