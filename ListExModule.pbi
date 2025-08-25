@@ -6183,13 +6183,18 @@ Module ListEx
                 If Column <> #NotValid
                   RF = SetRowFocus_(Row)
                   CF = SetColumnFocus_(Column)
-                  If RF Or CF : Draw_(#Horizontal | #Vertical) : EndIf
+                  ListEx()\Col\Current = Column
+                  ListEx()\Row\Focus = Row
+                  Draw_(#Horizontal | #Vertical)
+                  ;If RF Or CF : Draw_(#Horizontal | #Vertical) : EndIf
                   ManageEditGadgets_(Row, Column)
                 EndIf 
               EndIf
             Else
               CF = SetColumnFocus_(Column)
-              If CF : Draw_(#Horizontal) : EndIf
+              ListEx()\Col\Current = Column
+              Draw_(#Horizontal)
+              ;If CF : Draw_(#Horizontal) : EndIf
               ManageEditGadgets_(ListEx()\Date\Row, Column)
             EndIf
             
@@ -6203,13 +6208,18 @@ Module ListEx
                 If Column <> #NotValid
                   RF = SetRowFocus_(Row)
                   CF = SetColumnFocus_(Column)
-                  If RF Or CF : Draw_(#Horizontal | #Vertical) : EndIf
+                  ListEx()\Col\Current = Column
+                  ListEx()\Row\Focus = Row
+                  Draw_(#Horizontal | #Vertical)
+                  ;If RF Or CF : Draw_(#Horizontal | #Vertical) : EndIf
                   ManageEditGadgets_(Row, Column)
                 EndIf 
               EndIf
             Else
               CF = SetColumnFocus_(Column)
-              If CF : Draw_(#Horizontal) : EndIf
+              ListEx()\Col\Current = Column
+              Draw_(#Horizontal)
+              ;If CF : Draw_(#Horizontal) : EndIf
               ManageEditGadgets_(ListEx()\String\Row, Column)
             EndIf
         EndSelect
@@ -6242,13 +6252,18 @@ Module ListEx
                 If Column <> #NotValid
                   RF = SetRowFocus_(Row)
                   CF = SetColumnFocus_(Column)
-                  If RF Or CF : Draw_(#Horizontal | #Vertical) : EndIf
+                  ListEx()\Col\Current = Column
+                  ListEx()\Row\Focus = Row
+                  Draw_(#Horizontal | #Vertical)
+                  ;If RF Or CF : Draw_(#Horizontal | #Vertical) : EndIf
                   ManageEditGadgets_(Row, Column)
                 EndIf 
               EndIf
             Else
               CF = SetColumnFocus_(Column)
-              If CF : Draw_(#Horizontal) : EndIf
+              ListEx()\Col\Current = Column
+              Draw_(#Horizontal)
+              ;If CF : Draw_(#Horizontal) : EndIf
               ManageEditGadgets_(ListEx()\Date\Row, Column)
             EndIf
             
@@ -6263,13 +6278,18 @@ Module ListEx
                 If Column <> #NotValid
                   RF = SetRowFocus_(Row)
                   CF = SetColumnFocus_(Column)
-                  If RF Or CF : Draw_(#Horizontal | #Vertical) : EndIf
+                  ListEx()\Col\Current = Column
+                  ListEx()\Row\Focus = Row
+                  Draw_(#Horizontal | #Vertical)
+                  ;If RF Or CF : Draw_(#Horizontal | #Vertical) : EndIf
                   ManageEditGadgets_(Row, Column)
                 EndIf 
               EndIf
             Else
               CF = SetColumnFocus_(Column)
-              If CF : Draw_(#Horizontal) : EndIf
+              ListEx()\Col\Current = Column
+              Draw_(#Horizontal)
+              ;If CF : Draw_(#Horizontal) : EndIf
               ManageEditGadgets_(ListEx()\String\Row, Column)
             EndIf
         EndSelect
@@ -11663,9 +11683,9 @@ CompilerIf #PB_Compiler_IsMainFile
   
 CompilerEndIf
 ; IDE Options = PureBasic 6.12 LTS (Windows - x64)
-; CursorPosition = 8068
-; FirstLine = 1237
-; Folding = 2AggAAAAAAAAEAMAAAAAMAAAAAAAgASAAQBAAMAAgJCAAACFYIAAACAiiTt8I+vA+BEIHjgAAjAFGAAAhAaAAAAAYADiAAABAC9
-; Markers = 5467,5715,6327,8274,8557,8558
+; CursorPosition = 11327
+; FirstLine = 2456
+; Folding = 2AggAAAAAAAAEAMAAAAAMAAAAAAAgASAAQBAAMAAgJCAAACFYIAADCAgyAF6I+vA+BEIHjgAAjAFGAAAhAaAAAAAYADiAAABAC9
+; Markers = 5467,5715,6347,8294,8577,8578
 ; EnableXP
 ; DPIAware
