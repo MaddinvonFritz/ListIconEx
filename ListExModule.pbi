@@ -5504,7 +5504,6 @@ Module ListEx
               If ListEx()\Cols()\FontID
                 SetGadgetFont(ListEx()\StringNum, ListEx()\Cols()\FontID)
               Else
-                Debug "Font"
                 SetGadgetFont(ListEx()\StringNum, ListEx()\Row\FontID)
               EndIf
 
@@ -6347,7 +6346,7 @@ Module ListEx
     Define.i Row, Column, PageRows, Key, Modifier, Scrollbar
     Define.s Text
     Define.i GNum = EventGadget()
-Debug "Taste"
+
     If FindMapElement(ListEx(), Str(GNum))
       
       Key      = GetGadgetAttribute(GNum, #PB_Canvas_Key)
@@ -6760,6 +6759,7 @@ Debug "Taste"
         If dY > dpiY(ListEx()\Area\Y + ListEx()\Header\Height) And dY < dpiY(ListEx()\Area\Height)
           
           ListEx()\Row\Current = GetRowDPI_(dY)
+          ListEx()\Col\Current = GetColumnDPI_(dx)
           
           If ListEx()\Flags & #MultiSelect
            
@@ -8250,7 +8250,7 @@ Debug "Taste"
     
     If IsWindow(ListEx()\Window\Num)
       If Flag
-        Debug "Shortcuts on"
+        ;Debug "Shortcuts on"
         AddKeyboardShortcut(ListEx()\Window\Num, #PB_Shortcut_Return, #Key_Return)
         AddKeyboardShortcut(ListEx()\Window\Num, #PB_Shortcut_Escape, #Key_Escape)
         AddKeyboardShortcut(ListEx()\Window\Num, #PB_Shortcut_Tab,    #Key_Tab)
@@ -8260,7 +8260,7 @@ Debug "Taste"
         BindMenuEvent(ListEx()\ShortCutID, #Key_Tab,      @_KeyTabHandler())
         BindMenuEvent(ListEx()\ShortCutID, #Key_ShiftTab, @_KeyShiftTabHandler())
       Else
-        Debug "Shortcuts off"
+        ;Debug "Shortcuts off"
         UnbindMenuEvent(ListEx()\ShortCutID, #Key_Return,   @_KeyReturnHandler())
         UnbindMenuEvent(ListEx()\ShortCutID, #Key_Escape,   @_KeyEscapeHandler())
         UnbindMenuEvent(ListEx()\ShortCutID, #Key_Tab,      @_KeyTabHandler())
@@ -11222,7 +11222,7 @@ CompilerIf #PB_Compiler_IsMainFile
     #Validation
   EndEnumeration ;}
   
-  #Functions = #Images|#Scrollbar|#Fonts
+  #Functions = #Images|#Scrollbar|#Fonts|#AddPopup
   
   ; #Header      - Customise header
   ; #Column      - Customise columns
@@ -11325,7 +11325,7 @@ CompilerIf #PB_Compiler_IsMainFile
         Flags.i = ListEx::#NumberedColumn|ListEx::#GridLines|ListEx::#AutoResize
     EndSelect ;}
     
-    If ListEx::Gadget(#List, 90, 10, 395, 230, "", 25, "", Flags | ListEx::#UseRealStringGadget, #Window)
+    If ListEx::Gadget(#List, 90, 10, 395, 230, "", 25, "", Flags | ListEx::#UseRealStringGadget | ListEx::#CellFocus, #Window)
 
       ListEx::DisableReDraw(#List, #True) 
 
@@ -11683,9 +11683,9 @@ CompilerIf #PB_Compiler_IsMainFile
   
 CompilerEndIf
 ; IDE Options = PureBasic 6.12 LTS (Windows - x64)
-; CursorPosition = 11327
-; FirstLine = 2456
-; Folding = 2AggAAAAAAAAEAMAAAAAMAAAAAAAgASAAQBAAMAAgJCAAACFYIAADCAgyAF6I+vA+BEIHjgAAjAFGAAAhAaAAAAAYADiAAABAC9
-; Markers = 5467,5715,6347,8294,8577,8578
+; CursorPosition = 6755
+; FirstLine = 1436
+; Folding = 2AggAAAAAAAAEAMAAAAAMAAAAAAAgASAAQBAAMAAgJCAAACFYIAATCAg7AF6I+vA+hFIHjgAAjAFGAAAhIaAAAAAYADiAAABAC0
+; Markers = 5467,5714,6346,8294,8577,8578
 ; EnableXP
 ; DPIAware
