@@ -165,6 +165,7 @@
 ; XIncludeFile "ModuleEx.pbi"
 ; XIncludeFile "DateExModule.pbi"
 ; XIncludeFile "MarkDownModule.pbi"
+UseCRC32Fingerprint()
 
 DeclareModule ListEx
   
@@ -455,6 +456,7 @@ DeclareModule ListEx
   Declare.s GetItemID(GNum.i, Row.i)
   Declare.i GetItemState(GNum.i, Row.i, Column.i=#PB_Ignore)
   Declare.s GetItemText(GNum.i, Row.i, Column.i)
+  Declare.s GetFingerprint(Gnum.i)
   Declare.i GetRowFromLabel(GNum.i, Label.s)
   Declare.s GetRowLabel(GNum.i, Row.i)
   Declare.i GetState(GNum.i, Flag.i=#False)
@@ -8638,6 +8640,23 @@ Module ListEx
   ;-   Module - Declared Procedures
   ;- ==========================================================================  
   
+  Procedure.s GetFingerprint(Gnum.i)
+    Protected.i I, J
+    Protected Text$
+    
+    If FindMapElement(ListEx(), Str(GNum))
+      
+      ForEach ListEx()\Rows()
+        ForEach ListEx()\Rows()\Column()
+          Text$ = Text$ + ListEx()\Rows()\Column()\Value
+        Next
+      Next
+      
+      ProcedureReturn StringFingerprint(Text$, #PB_Cipher_CRC32)
+	  EndIf  
+    
+  EndProcedure
+  
   Procedure.q GetData(GNum.i)
 	  
 	  If FindMapElement(ListEx(), Str(GNum))
@@ -11684,9 +11703,9 @@ CompilerIf #PB_Compiler_IsMainFile
   
 CompilerEndIf
 ; IDE Options = PureBasic 6.12 LTS (Windows - x64)
-; CursorPosition = 9235
-; FirstLine = 2033
-; Folding = 2AggAAAAAAAAEAMAAAAAMAAAAAAAgASAAQBAAMAAgJCAAACFYIAATCAg7AF6I+vA+hFIHjgAAjAFGAAAhIaAAAAAYADiAAABAC0
-; Markers = 5467,5714,6346,8294,8577,8578
+; CursorPosition = 458
+; FirstLine = 254
+; Folding = 2AggAAAAAAAAEAMAAAAAMAAACAAAgASAAQBAAMAAgJCAAACFYIAATCAg7AF6I+vA+hFIPGBBAGBKMAAACR1AAAAAwAGEBAACAE7
+; Markers = 5469,5716,6348,8296,8579,8580
 ; EnableXP
 ; DPIAware
