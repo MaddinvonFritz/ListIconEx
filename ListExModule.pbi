@@ -9233,6 +9233,7 @@ Module ListEx
       
       If State = #True
         ListEx()\Editable = #False
+        CloseString_()
       Else
         ListEx()\Editable = #True
       EndIf
@@ -11683,8 +11684,8 @@ CompilerIf #PB_Compiler_IsMainFile
   
 CompilerEndIf
 ; IDE Options = PureBasic 6.12 LTS (Windows - x64)
-; CursorPosition = 6755
-; FirstLine = 1436
+; CursorPosition = 9235
+; FirstLine = 2033
 ; Folding = 2AggAAAAAAAAEAMAAAAAMAAAAAAAgASAAQBAAMAAgJCAAACFYIAATCAg7AF6I+vA+hFIHjgAAjAFGAAAhIaAAAAAYADiAAABAC0
 ; Markers = 5467,5714,6346,8294,8577,8578
 ; EnableXP
